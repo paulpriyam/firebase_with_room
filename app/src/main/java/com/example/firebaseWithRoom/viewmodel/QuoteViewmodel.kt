@@ -1,0 +1,56 @@
+package com.example.firebaseWithRoom.viewmodel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.firebaseWithRoom.model.Quote
+import com.example.firebaseWithRoom.repo.QuoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+
+@HiltViewModel
+class QuoteViewmodel @Inject constructor(private val quoteRepository: QuoteRepository) :
+    ViewModel() {
+
+    private var _quotes = MutableLiveData<List<Quote>>().apply {
+        value = arrayListOf()
+    }
+    val quotes: LiveData<List<Quote>> get() = _quotes
+
+    private var _quoteInserted = MutableLiveData<Boolean>().apply {
+        value = false
+    }
+    val quoteInserted: LiveData<Boolean> get() = _quoteInserted
+
+    fun getAllQuotes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = quoteRepository.getAllQuotes()
+            withContext(Dispatchers.Main) {
+                _quotes.postValue(response)
+            }
+        }
+    }
+
+    fun deleteAllQuotes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            quoteRepository.deleteAllQuotes()
+        }
+    }
+
+    fun insertQuote(quote: Quote) {
+        try {
+            viewModelScope.launch(Dispatchers.IO) {
+                quoteRepository.insertQuote(quote)
+                withContext(Dispatchers.Main) {
+                    _quoteInserted.postValue(true)
+                }
+            }
+        } catch (e: Exception) {
+            _quoteInserted.postValue(false)
+        }
+    }
+}

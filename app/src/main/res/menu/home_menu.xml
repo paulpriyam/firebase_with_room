@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/quoteListFragment"
+        android:title="Quote List"
+        android:icon="@drawable/ic_list"/>
+
+    <item android:id="@+id/addQuoteFragment"
+        android:title="Add Quote"
+        android:icon="@drawable/ic_add_quote"/>
+</menu>
