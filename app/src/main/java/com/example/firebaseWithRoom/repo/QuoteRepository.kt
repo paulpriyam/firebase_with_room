@@ -11,4 +11,8 @@ class QuoteRepository @Inject constructor(private val quoteDao: QuoteDao) {
     suspend fun deleteAllQuotes() = quoteDao.deleteAllQuotes()
 
     fun getAllQuotes() = quoteDao.getAllQuotes()
+
+    fun getAllQuotesToSync() = quoteDao.getAllQuotesToSync()
+
+    suspend fun updateSyncFlagToOne() = quoteDao.updateSyncFlag()
 }

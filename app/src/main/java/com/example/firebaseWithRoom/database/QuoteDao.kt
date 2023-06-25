@@ -16,4 +16,10 @@ interface QuoteDao {
 
     @Query("SELECT * FROM quote_table")
     fun getAllQuotes(): List<Quote>
+
+    @Query("SELECT * FROM quote_table WHERE isSynced = 0")
+    fun getAllQuotesToSync(): List<Quote>
+
+    @Query("UPDATE quote_table SET isSynced = 1 WHERE isSynced = 0")
+    suspend fun updateSyncFlag()
 }

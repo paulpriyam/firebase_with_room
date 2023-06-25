@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.firebaseWithRoom.model.Quote
 import com.example.firebaseWithRoom.repo.QuoteRepository
+import com.example.firebaseWithRoom.util.ViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,17 +22,40 @@ class QuoteViewmodel @Inject constructor(private val quoteRepository: QuoteRepos
     }
     val quotes: LiveData<List<Quote>> get() = _quotes
 
+    private var _quotesToSync = MutableLiveData<List<Quote>>().apply {
+        value = arrayListOf()
+    }
+    val quotesToSync: LiveData<List<Quote>> get() = _quotesToSync
+
     private var _quoteInserted = MutableLiveData<Boolean>().apply {
         value = false
     }
     val quoteInserted: LiveData<Boolean> get() = _quoteInserted
 
+    var _quotesSyncedState = MutableLiveData<ViewState>().apply {
+        value = ViewState.CANCEL
+    }
+
+    val quoteSyncedState: LiveData<ViewState> get() = _quotesSyncedState
     fun getAllQuotes() {
         viewModelScope.launch(Dispatchers.IO) {
             val response = quoteRepository.getAllQuotes()
             withContext(Dispatchers.Main) {
                 _quotes.postValue(response)
             }
+        }
+    }
+
+    fun getAllQuotesToSync() {
+        try {
+            viewModelScope.launch(Dispatchers.IO) {
+                val response = quoteRepository.getAllQuotesToSync()
+                withContext(Dispatchers.Main) {
+                    _quotesToSync.postValue(response)
+                }
+            }
+        } catch (e: Exception) {
+            _quotesToSync.postValue(arrayListOf())
         }
     }
 
@@ -51,6 +75,17 @@ class QuoteViewmodel @Inject constructor(private val quoteRepository: QuoteRepos
             }
         } catch (e: Exception) {
             _quoteInserted.postValue(false)
+        }
+    }
+
+    fun updateSyncFlag() {
+        try {
+            viewModelScope.launch(Dispatchers.IO) {
+                quoteRepository.updateSyncFlagToOne()
+                _quotesSyncedState.postValue(ViewState.SUCCESS)
+            }
+        } catch (e: Exception) {
+            _quotesSyncedState.postValue(ViewState.ERROR(e.message.toString()))
         }
     }
 }
