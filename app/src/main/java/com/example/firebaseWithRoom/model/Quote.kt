@@ -8,7 +8,8 @@ data class Quote(
     var title: String = "",
     var description: String = "",
     var createdAt: Long = 0L,
-    var modifiedAt: Long = 0L
+    var modifiedAt: Long = 0L,
+    var isSynced: Int
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null

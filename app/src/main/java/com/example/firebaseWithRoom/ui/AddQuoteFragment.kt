@@ -37,7 +37,8 @@ class AddQuoteFragment : Fragment(R.layout.fragment_add_quote) {
                         title = titleFlow.value,
                         description = descriptionFlow.value,
                         createdAt = System.currentTimeMillis(),
-                        modifiedAt = modifiedAtFlow.value
+                        modifiedAt = modifiedAtFlow.value,
+                        isSynced = 0
                     )
                     viewModel.insertQuote(quote)
                     findNavController().navigate(R.id.action_addQuoteFragment_to_quoteListFragment)

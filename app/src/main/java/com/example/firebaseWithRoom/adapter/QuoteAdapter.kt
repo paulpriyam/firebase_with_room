@@ -2,12 +2,15 @@ package com.example.firebaseWithRoom.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.example.firebaseWithRoom.R
 import com.example.firebaseWithRoom.databinding.LayoutQuoteItemBinding
 import com.example.firebaseWithRoom.model.Quote
+import com.example.firebaseWithRoom.util.fromLongToDDMMMYYYY
 
 class QuoteAdapter : RecyclerView.Adapter<QuoteAdapter.QuoteViewHolder>() {
 
@@ -25,7 +28,8 @@ class QuoteAdapter : RecyclerView.Adapter<QuoteAdapter.QuoteViewHolder>() {
 
         }
     }
-    fun setData(quoteList:List<Quote>){
+
+    fun setData(quoteList: List<Quote>) {
         quotes.clear()
         quotes.addAll(quoteList)
         notifyDataSetChanged()
@@ -38,6 +42,23 @@ class QuoteAdapter : RecyclerView.Adapter<QuoteAdapter.QuoteViewHolder>() {
         fun bind(quote: Quote) {
             binding.tvQuoteTitle.text = quote.title
             binding.tvQuoteDesc.text = quote.description
+            binding.tvCreatedAt.text = quote.createdAt.fromLongToDDMMMYYYY()
+            binding.tvModifiedAt.text = "Last Modified ${quote.modifiedAt.fromLongToDDMMMYYYY()}"
+            if (quote.isSynced == 0) {
+                binding.ivSync.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        binding.ivSync.context,
+                        R.drawable.ic_circle_red
+                    )
+                )
+            } else {
+                binding.ivSync.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        binding.ivSync.context,
+                        R.drawable.ic_circle_green
+                    )
+                )
+            }
         }
     }
 
