@@ -1,5 +1,6 @@
 package com.example.firebaseWithRoom.adapter
 
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -15,6 +16,8 @@ import com.example.firebaseWithRoom.util.fromLongToDDMMMYYYY
 class QuoteAdapter : RecyclerView.Adapter<QuoteAdapter.QuoteViewHolder>() {
 
     private var quotes: ArrayList<Quote> = arrayListOf()
+
+    private var selectedIds: List<Int> = ArrayList()
 
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<Quote>() {
@@ -59,6 +62,28 @@ class QuoteAdapter : RecyclerView.Adapter<QuoteAdapter.QuoteViewHolder>() {
                     )
                 )
             }
+
+            if (selectedIds.contains(quote.id)) {
+                //if item is selected then,set foreground color of FrameLayout.
+                binding.root.setForeground(
+                    ColorDrawable(
+                        ContextCompat.getColor(
+                            binding.root.context,
+                            R.color.colorControlActivated
+                        )
+                    )
+                );
+            } else {
+                //else remove selected item color.
+                binding.root.setForeground(
+                    ColorDrawable(
+                        ContextCompat.getColor(
+                            binding.root.context,
+                            android.R.color.transparent
+                        )
+                    )
+                );
+            }
         }
     }
 
@@ -80,5 +105,14 @@ class QuoteAdapter : RecyclerView.Adapter<QuoteAdapter.QuoteViewHolder>() {
     override fun onBindViewHolder(holder: QuoteViewHolder, position: Int) {
         val quote = asyncQuoteList.currentList.get(position)
         holder.bind(quote)
+    }
+
+    fun getItem(position: Int): Quote? {
+        return asyncQuoteList.currentList.get(position)
+    }
+
+    fun setSelectedIds(selectedIds: List<Int>) {
+        this.selectedIds = selectedIds
+        notifyDataSetChanged()
     }
 }

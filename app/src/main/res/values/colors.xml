@@ -11,4 +11,5 @@
     <color name="background">#DAD2D2</color>
     <color name="red">#FD0808</color>
     <color name="green">#18FD08</color>
+    <color name="colorControlActivated">#50FF4081</color>
 </resources>
