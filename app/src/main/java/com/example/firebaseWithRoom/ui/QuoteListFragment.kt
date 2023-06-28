@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebaseWithRoom.R
 import com.example.firebaseWithRoom.RecyclerViewClickListener
 import com.example.firebaseWithRoom.adapter.QuoteAdapter
+import com.example.firebaseWithRoom.base.BaseFragment
 import com.example.firebaseWithRoom.databinding.FragmentQuoteListBinding
 import com.example.firebaseWithRoom.util.Constants
 import com.example.firebaseWithRoom.util.ViewState
@@ -20,10 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class QuoteListFragment : Fragment(R.layout.fragment_quote_list), ActionMode.Callback {
+class QuoteListFragment : BaseFragment<FragmentQuoteListBinding>(FragmentQuoteListBinding::inflate), ActionMode.Callback {
 
-    private lateinit var _binding: FragmentQuoteListBinding
-    private val binding get() = _binding
     private lateinit var quoteAdapter: QuoteAdapter
     private val viewModel: QuoteViewmodel by viewModels()
 
@@ -31,14 +30,7 @@ class QuoteListFragment : Fragment(R.layout.fragment_quote_list), ActionMode.Cal
     private var isMultiSelect: Boolean = false
     private var selectedIds: ArrayList<Int> = arrayListOf()
     private var actionMode: ActionMode?=null
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentQuoteListBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

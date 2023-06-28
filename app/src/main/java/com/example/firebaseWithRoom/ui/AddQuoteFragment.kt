@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.firebaseWithRoom.R
+import com.example.firebaseWithRoom.base.BaseFragment
 import com.example.firebaseWithRoom.databinding.FragmentAddQuoteBinding
 import com.example.firebaseWithRoom.model.Quote
 import com.example.firebaseWithRoom.util.fromLongToDDMMMYYYY
@@ -19,9 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
-class AddQuoteFragment : Fragment(R.layout.fragment_add_quote) {
-    private lateinit var _binding: FragmentAddQuoteBinding
-    private val binding get() = _binding
+class AddQuoteFragment : BaseFragment<FragmentAddQuoteBinding>(FragmentAddQuoteBinding::inflate) {
 
     private val viewModel: QuoteViewmodel by viewModels()
     private var titleFlow = MutableStateFlow("")
@@ -46,15 +45,6 @@ class AddQuoteFragment : Fragment(R.layout.fragment_add_quote) {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentAddQuoteBinding.inflate(layoutInflater, container, false)
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
