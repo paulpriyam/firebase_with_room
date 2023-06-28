@@ -6,10 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.example.firebaseWithRoom.util.NetworkConnectivityObserver
+import kotlinx.coroutines.flow.collect
 
 abstract class BaseFragment<VB : ViewBinding>(
     private val bindingInflater: (inflater: LayoutInflater) -> VB
 ) : Fragment() {
+
+    val connectivityObserver: NetworkConnectivityObserver by lazy {
+        NetworkConnectivityObserver(requireContext())
+    }
 
     private var _binding: VB? = null
     val binding: VB

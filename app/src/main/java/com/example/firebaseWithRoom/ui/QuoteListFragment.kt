@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebaseWithRoom.R
@@ -18,10 +19,13 @@ import com.example.firebaseWithRoom.util.ViewState
 import com.example.firebaseWithRoom.viewmodel.QuoteViewmodel
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class QuoteListFragment : BaseFragment<FragmentQuoteListBinding>(FragmentQuoteListBinding::inflate), ActionMode.Callback {
+class QuoteListFragment : BaseFragment<FragmentQuoteListBinding>(FragmentQuoteListBinding::inflate),
+    ActionMode.Callback {
 
     private lateinit var quoteAdapter: QuoteAdapter
     private val viewModel: QuoteViewmodel by viewModels()
@@ -29,7 +33,7 @@ class QuoteListFragment : BaseFragment<FragmentQuoteListBinding>(FragmentQuoteLi
     private lateinit var firestore: FirebaseFirestore
     private var isMultiSelect: Boolean = false
     private var selectedIds: ArrayList<Int> = arrayListOf()
-    private var actionMode: ActionMode?=null
+    private var actionMode: ActionMode? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -120,7 +124,9 @@ class QuoteListFragment : BaseFragment<FragmentQuoteListBinding>(FragmentQuoteLi
         val data = quoteAdapter.getItem(position)
         if (data != null) {
             if (actionMode != null) {
-                if (selectedIds.contains(data.id)) selectedIds.remove(data.id) else selectedIds.add(data.id?:0)
+                if (selectedIds.contains(data.id)) selectedIds.remove(data.id) else selectedIds.add(
+                    data.id ?: 0
+                )
                 if (selectedIds.size > 0) actionMode?.title =
                     selectedIds.size.toString() //show selected item count on action mode.
                 else {
@@ -135,6 +141,11 @@ class QuoteListFragment : BaseFragment<FragmentQuoteListBinding>(FragmentQuoteLi
     override fun onResume() {
         super.onResume()
         viewModel.getAllQuotes()
+        lifecycleScope.launch {
+            connectivityObserver.observe().collectLatest {
+                Toast.makeText(requireContext(), it.name, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -156,7 +167,11 @@ class QuoteListFragment : BaseFragment<FragmentQuoteListBinding>(FragmentQuoteLi
                     if (selectedIds.contains(data.id)) stringBuilder.append("\n")
                         .append(data.title)
                 }
-                Toast.makeText(requireContext(), "Selected items are :$stringBuilder", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    requireContext(),
+                    "Selected items are :$stringBuilder",
+                    Toast.LENGTH_SHORT
+                )
                     .show()
                 return true
             }
@@ -170,4 +185,6 @@ class QuoteListFragment : BaseFragment<FragmentQuoteListBinding>(FragmentQuoteLi
         selectedIds = ArrayList()
         quoteAdapter.setSelectedIds(ArrayList())
     }
+
+
 }
